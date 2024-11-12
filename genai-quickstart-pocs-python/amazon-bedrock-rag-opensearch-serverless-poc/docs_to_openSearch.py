@@ -6,13 +6,46 @@ from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain.document_loaders import PyPDFLoader, PyPDFDirectoryLoader
 
+def delete_index(index_name):
+    if client.indices.exists(index_name):
+        client.indices.delete(index=index_name)
+        print(f"Deleted existing index: {index_name}")
+
+
+def load_pdfs_from_folder(folder_path):
+    # List to store all documents
+    all_documents = []
+    
+    # Iterate through files in the folder
+    for filename in os.listdir(folder_path):
+        if filename.lower().endswith('.pdf'):
+            try:
+                # Create full file path
+                file_path = os.path.join(folder_path, filename)
+                
+                # Load PDF
+                loader = PyPDFLoader(file_path)
+                documents = loader.load()
+                
+                # Add to our documents list
+                all_documents.extend(documents)
+                print(f"Successfully loaded: {filename}")
+                
+            except Exception as e:
+                print(f"Error loading {filename}: {str(e)}")
+    
+    return all_documents
+
 # loading in environment variables
 load_dotenv()
+
+
 
 # instantiating the bedrock client, with specific CLI profile
 boto3.setup_default_session(profile_name=os.getenv('profile_name'))
 bedrock = boto3.client('bedrock-runtime', 'us-east-1', endpoint_url='https://bedrock-runtime.us-east-1.amazonaws.com')
 opensearch = boto3.client("opensearchserverless")
+print(os.getenv('profile_name'))
 
 # Instantiating the OpenSearch client, with specific CLI profile
 host = os.getenv('opensearch_host')  # cluster endpoint, for example: my-test-domain.us-east-1.aoss.amazonaws.com
@@ -30,10 +63,17 @@ client = OpenSearch(
     pool_maxsize=20
 )
 
+#index_name = os.getenv('vector_index_name')
+#delete_index(index_name)
+
 # loading in PDF, can use PyPDFDirectoryLoader if you want to load in a directory of PDFs
 # TODO: Change PDF loader and chunker
-loader = PyPDFLoader("/Users/rdoty/Desktop/BOW/Coding/genai-quickstart-pocs/amazon-bedrock-rag-opensearch-serverless-poc/sample_document.pdf")
-documents = loader.load()
+pdf_path ='/Users/TheDr/Desktop/position-statements'
+# pdf_path ='/Users/TheDr/Desktop/position-statements/Access to Quality Healthcare Position Statement.pdf'
+documents = load_pdfs_from_folder(pdf_path)
+#documents=PyPDFDirectoryLoader(pdf_path)
+#loader = PyPDFLoader(pdf_path)
+#documents = loader.load()
 
 # implementing a text splitter based on number of characters
 # TODO: PLAY WITH THESE VALUES TO OPTIMIZE FOR YOUR USE CASE

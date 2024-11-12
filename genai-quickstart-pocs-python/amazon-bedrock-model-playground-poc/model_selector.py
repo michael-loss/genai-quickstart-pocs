@@ -159,7 +159,7 @@ class ModelChoices:
         # Define the request body for the Amazon model, passing in the user question
         request_body = json.dumps({"inputText": question,
                                    "textGenerationConfig": {
-                                       "maxTokenCount": 4096,
+                                       "maxTokenCount": 2000,
                                        "stopSequences": [],
                                        "temperature": 0.5,
                                        "topP": 0.5

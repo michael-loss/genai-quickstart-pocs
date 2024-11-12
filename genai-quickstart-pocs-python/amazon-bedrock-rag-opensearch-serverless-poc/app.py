@@ -2,7 +2,8 @@ import streamlit as st
 from query_against_openSearch import answer_query
 
 # Header/Title of streamlit app
-st.title(f""":rainbow[RAG with Amazon OpenSearch Serverless Vector Search]""")
+#st.title(f""":rainbow[RAG with Amazon OpenSearch Serverless Vector Search]""")
+st.title(f""":rainbow[Hello! I'm GENA]""")
 
 # configuring values for session state
 if "messages" not in st.session_state:
@@ -14,7 +15,7 @@ for message in st.session_state.messages:
 # adding some special effects from the UI perspective
 st.balloons()
 # evaluating st.chat_input and determining if a question has been input
-if question := st.chat_input("Ask about your data stored in Amazon OpenSearch Serverless Vector Search"):
+if question := st.chat_input("Ask me about ENA's current Position Statements"):
     # with the user icon, write the question to the front end
     with st.chat_message("user"):
         st.markdown(question)

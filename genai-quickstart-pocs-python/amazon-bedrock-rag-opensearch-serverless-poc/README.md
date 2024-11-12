@@ -93,6 +93,13 @@ With our Amazon OpenSearch Serverless Vector Search collection created, we now m
 2. We will then input a Vector Index Name, Vector Field Name, Dimensions and distance metric... **BE SURE TO NOTE DOWN THE VECTOR INDEX NAME AND VECTOR FIELD NAME**. The Dimensions field is expecting an integer, in our case since we are using the 'amazon.titan-embed-text-v1' embeddings model, the dimension size will be 1536. If you plan on using a different embeddings model you will need to change this value to represent the output vector size of that specific model. Then Select "Create" ![Alt text](images/create_vector_index_name.png "Create Vector Index Details") ![Alt text](images/vector_field.png "Create Vector Index Details")
 3. **_OPTIONAL:_** If you want to add meta-data to your documents that you plan on indexing, you must specify those fields in this vector index configuration. If you plan on adding meta-data you will need to reconfigure some of the code in the docs_to_openSearch.py file ![Alt text](images/metadata.png "Add Meta-Data")
 
+****
+collection endpoint: https://hjwyh8rjvcdfvtin5ybg.us-east-1.aoss.amazonaws.com
+
+vector indexname: vector-index-br-hack-02
+vector fieldname: vector-field-br-hack-02
+****
+
 ## Step 5:
 
 Now that the requirements have been successfully installed in your virtual environment, your OpenSearch Serverless Vector Search and Vector Index are created, we can now begin configuring environment variables.

@@ -25,6 +25,7 @@ model_id = st.sidebar.selectbox("Select a model", ['anthropic.claude-instant-v1'
          'cohere.command-light-text-v14',
          'amazon.titan-text-lite-v1',
          'amazon.titan-text-express-v1',
+         'amazon.titan-text-premier-v1:0',
          'ai21.j2-mid-v1',
          'ai21.j2-ultra-v1'
          ])

@@ -56,7 +56,7 @@ def call_titan(query, retriever):
 
     # Setting Model kwargs
     model_kwargs = {
-        "maxTokenCount": 4096,
+        "maxTokenCount": 1000,
         "stopSequences": [],
         "temperature": 0,
         "topP": 1,
@@ -64,7 +64,7 @@ def call_titan(query, retriever):
 
     # Setting LLM method from the Language Bedrock library
     llm = Bedrock(
-        client=bedrock, model_id="amazon.titan-text-express-v1", model_kwargs=model_kwargs
+        client=bedrock, model_id="amazon.titan-text-premier-v1:0", model_kwargs=model_kwargs
     )
 
     # Invoke Amazon Titan using the Langchain llm method
@@ -138,3 +138,6 @@ def answer_query(user_input):
         return answer["result"]
     else:
         return "no response from model"
+    
+#question='what are the 7 Emergency Nurses Association Positions?'
+#answer = answer_query(question)
