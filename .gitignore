@@ -215,3 +215,7 @@ genai-quickstart-pocs-python/amazon-bedrock-alt-text-generator/files/
 # ignore generated image files:
 genai-quickstart-pocs-python/amazon-bedrock-image-guardrails-poc/images/
 
+#ignore streamlit local stuff
+.streamlit/secrets.toml
+
+

@@ -3,12 +3,71 @@ import json
 from dotenv import load_dotenv
 import os
 from opensearchpy import OpenSearch, RequestsHttpConnection, AWSV4SignerAuth
+import streamlit as st
+
+import toml
+from pathlib import Path
+
+def load_dotStreat():
+    """
+    Load environment variables from .streamlit/secrets.toml file into os.environ.
+    Similar to load_dotenv but for Streamlit secrets.
+    
+    Returns:
+        bool: True if secrets.toml was loaded successfully, False otherwise
+    """
+    try:
+        # Define the path to secrets.toml
+        secrets_path = Path('.streamlit/secrets.toml')
+        
+        # Check if the file exists
+        if not secrets_path.exists():
+            print(f"Warning: {secrets_path} not found")
+            return False
+            
+        # Load the TOML file
+        secrets = toml.load(secrets_path)
+        
+        # Add each secret to environment variables
+        for key, value in secrets.items():
+            # Convert all values to strings (environment variables must be strings)
+            os.environ[key] = str(value)
+            
+        return True
+        
+    except Exception as e:
+        print(f"Error loading secrets.toml: {str(e)}")
+        return False
+
+
+def load_dotstream():
+    # Get AWS credentials from Streamlit secrets
+    aws_credentials = {
+        "AWS_ACCESS_KEY_ID": st.secrets["AWS_ACCESS_KEY_ID"],
+        "AWS_SECRET_ACCESS_KEY": st.secrets["AWS_SECRET_ACCESS_KEY"],
+        "AWS_DEFAULT_REGION": st.secrets["AWS_DEFAULT_REGION"]
+    }
+
+    # Initialize Bedrock client
+    bedrock_runtime = boto3.client(
+        service_name='bedrock-runtime',
+        region_name=aws_credentials["AWS_DEFAULT_REGION"],
+        aws_access_key_id=aws_credentials["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=aws_credentials["AWS_SECRET_ACCESS_KEY"]
+    )
+    return bedrock_runtime
+
 
 # loading in variables from .env file
-load_dotenv()
-
+#load_dotenv()
+load_dotStreat()
+#bedrock = load_dotstream()
 accept = 'application/json'
 contentType = 'application/json'
+#os.environ['profile_name'] = st.secrets["AWS_PROFILE_NAME"]
+#os.environ['opensearch_host'] = st.secrets["AWS_PROFILE_NAME"]
+#os.environ['vector_index_name'] = st.secrets["vector_index_name"]
+#os.environ['vector_field_name'] = st.secrets["vector_field_name"]
 
 # instantiating the Bedrock client, and passing in the CLI profile
 boto3.setup_default_session(profile_name=os.getenv('profile_name'))
@@ -60,8 +119,6 @@ def get_embedding(text):
     
     return embedding
       
-
-
 
 def get_embedding2(body):
     """
@@ -381,5 +438,6 @@ def answer_query2(user_input):
 #question='what is ena?'
 #response = answer_query(question)
 #print(response)
+
 #response = amazon(model_id= "amazon.titan-text-premier-v1:0" , question=question)
 #print(response)
