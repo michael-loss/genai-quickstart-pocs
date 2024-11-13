@@ -140,7 +140,8 @@ opensearch = boto3.client("opensearchserverless")
 host = os.getenv('opensearch_host')  # cluster endpoint, for example: my-test-domain.us-east-1.aoss.amazonaws.com
 region = 'us-east-1'
 service = 'aoss'
-credentials = boto3.Session(profile_name=os.getenv('profile_name')).get_credentials()
+#credentials = boto3.Session(profile_name=os.getenv('profile_name')).get_credentials()
+credentials = session.get_credentials()
 auth = AWSV4SignerAuth(credentials, region, service)
 
 client = OpenSearch(
