@@ -8,6 +8,62 @@ import streamlit as st
 import toml
 from pathlib import Path
 
+def load_dotStreat_sl():
+    """
+    Load environment variables from either:
+    1. Streamlit Cloud secrets (if deployed)
+    2. Local .streamlit/secrets.toml (if running locally)
+    
+    Sets values in os.environ for compatibility with existing code.
+    
+    Returns:
+        bool: True if secrets were loaded successfully, False otherwise
+    """
+    try:
+        # Check if running on Streamlit Cloud by looking for STREAMLIT_SHARING_MODE
+        is_streamlit_cloud = os.getenv('STREAMLIT_SHARING_MODE') is not None
+        
+        if is_streamlit_cloud:
+            # Running on Streamlit Cloud - use st.secrets
+            for key, value in st.secrets.items():
+                # Skip internal streamlit keys that start with _
+                if not key.startswith('_'):
+                    # Handle nested dictionaries in secrets
+                    if isinstance(value, dict):
+                        for sub_key, sub_value in value.items():
+                            full_key = f"{key}_{sub_key}".upper()
+                            os.environ[full_key] = str(sub_value)
+                    else:
+                        os.environ[key.upper()] = str(value)
+            return True
+            
+        else:
+            # Running locally - load from .streamlit/secrets.toml
+            secrets_path = Path('.streamlit/secrets.toml')
+            
+            if not secrets_path.exists():
+                print(f"Warning: {secrets_path} not found")
+                return False
+                
+            # Load the TOML file
+            secrets = toml.load(secrets_path)
+            
+            # Add each secret to environment variables
+            for key, value in secrets.items():
+                if isinstance(value, dict):
+                    # Handle nested dictionaries
+                    for sub_key, sub_value in value.items():
+                        full_key = f"{key}_{sub_key}".upper()
+                        os.environ[full_key] = str(sub_value)
+                else:
+                    os.environ[key.upper()] = str(value)
+            
+            return True
+            
+    except Exception as e:
+        print(f"Error loading secrets: {str(e)}")
+        return False
+
 def load_dotStreat():
     """
     Load environment variables from .streamlit/secrets.toml file into os.environ.
@@ -60,7 +116,7 @@ def load_dotstream():
 
 # loading in variables from .env file
 #load_dotenv()
-load_dotStreat()
+load_dotStreat_sl()
 #bedrock = load_dotstream()
 accept = 'application/json'
 contentType = 'application/json'
