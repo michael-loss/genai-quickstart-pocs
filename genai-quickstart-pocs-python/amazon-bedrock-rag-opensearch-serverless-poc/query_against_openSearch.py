@@ -126,8 +126,14 @@ contentType = 'application/json'
 #os.environ['vector_field_name'] = st.secrets["vector_field_name"]
 
 # instantiating the Bedrock client, and passing in the CLI profile
-boto3.setup_default_session(profile_name=os.getenv('profile_name'))
-bedrock = boto3.client('bedrock-runtime', 'us-east-1', endpoint_url='https://bedrock-runtime.us-east-1.amazonaws.com')
+#boto3.setup_default_session(profile_name=os.getenv('profile_name'))
+session = boto3.Session(
+    aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"],
+    region_name=st.secrets["AWS_DEFAULT_REGION"]
+)
+
+bedrock = session.client('bedrock-runtime', 'us-east-1', endpoint_url='https://bedrock-runtime.us-east-1.amazonaws.com')
 
 # instantiating the OpenSearch client, and passing in the CLI profile
 opensearch = boto3.client("opensearchserverless")
